@@ -1,13 +1,11 @@
-import * as useCases from './ingreso-familia.use-cases.js';
+import * as useCases from './periodo-academico.use-cases.js';
 import { created, ok, noContent, notFound, badRequest, handleError } from '../../shared/http.js';
 
 export async function create(req, res) {
   try {
-    const { familia_id, periodo_id, fecha_ingreso } = req.body;
-    if (!familia_id || !periodo_id || !fecha_ingreso) {
-      return badRequest(res, 'familia_id, periodo_id y fecha_ingreso son requeridos');
-    }
-    const row = await useCases.createIngresoFamilia(req.body);
+    const { anio, semestre, codigo } = req.body;
+    if (!anio || !semestre || !codigo) return badRequest(res, 'anio, semestre y codigo son requeridos');
+    const row = await useCases.createPeriodo(req.body);
     return created(res, row);
   } catch (err) {
     return handleError(res, err);
@@ -17,7 +15,7 @@ export async function create(req, res) {
 export async function getById(req, res) {
   try {
     const row = await useCases.getById(req.params.id);
-    if (!row) return notFound(res, 'Ingreso familia no encontrado');
+    if (!row) return notFound(res, 'Periodo académico no encontrado');
     return ok(res, row);
   } catch (err) {
     return handleError(res, err);
@@ -26,20 +24,20 @@ export async function getById(req, res) {
 
 export async function list(req, res) {
   try {
-    const { periodo_id, familia_id } = req.query;
+    const { activo } = req.query;
     const page = Math.max(parseInt(req.query.page) || 1, 1);
     const limit = Math.min(Math.max(parseInt(req.query.limit) || 20, 1), 100);
-    const result = await useCases.list({ periodo_id, familia_id, page, limit });
+    const result = await useCases.list({ activo, page, limit });
     return ok(res, result);
   } catch (err) {
     return handleError(res, err);
   }
 }
 
-export async function getCompleto(req, res) {
+export async function getActivo(req, res) {
   try {
-    const row = await useCases.getCompleto(req.params.id);
-    if (!row) return notFound(res, 'Ingreso familia no encontrado');
+    const row = await useCases.getActivo();
+    if (!row) return notFound(res, 'No hay periodo activo');
     return ok(res, row);
   } catch (err) {
     return handleError(res, err);
@@ -48,8 +46,8 @@ export async function getCompleto(req, res) {
 
 export async function update(req, res) {
   try {
-    const row = await useCases.updateIngresoFamilia(req.params.id, req.body);
-    if (!row) return notFound(res, 'Ingreso familia no encontrado');
+    const row = await useCases.updatePeriodo(req.params.id, req.body);
+    if (!row) return notFound(res, 'Periodo académico no encontrado');
     return ok(res, row);
   } catch (err) {
     return handleError(res, err);
@@ -58,8 +56,8 @@ export async function update(req, res) {
 
 export async function remove(req, res) {
   try {
-    const deleted = await useCases.deleteIngresoFamilia(req.params.id);
-    if (!deleted) return notFound(res, 'Ingreso familia no encontrado');
+    const deleted = await useCases.deletePeriodo(req.params.id);
+    if (!deleted) return notFound(res, 'Periodo académico no encontrado');
     return noContent(res);
   } catch (err) {
     return handleError(res, err);
