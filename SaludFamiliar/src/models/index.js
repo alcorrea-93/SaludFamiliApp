@@ -1,4 +1,6 @@
 import { sequelize } from '../config/database.js';
+import { Territorio } from './Territorio.js';
+import { Vereda } from './Vereda.js';
 import { Familia } from './Familia.js';
 import { PeriodoAcademico } from './PeriodoAcademico.js';
 import { IngresoFamilia } from './IngresoFamilia.js';
@@ -9,6 +11,13 @@ import { IngresoMiembro0a18 } from './IngresoMiembro0a18.js';
 import { IngresoMiembro19a44 } from './IngresoMiembro19a44.js';
 import { IngresoMiembro45Mas } from './IngresoMiembro45Mas.js';
 import { IngresoMiembroGestante } from './IngresoMiembroGestante.js';
+
+/* Territorio -> Vereda -> Familia */
+Vereda.belongsTo(Territorio, { foreignKey: 'territorio_id' });
+Territorio.hasMany(Vereda, { foreignKey: 'territorio_id' });
+
+Familia.belongsTo(Vereda, { foreignKey: 'vereda_id' });
+Vereda.hasMany(Familia, { foreignKey: 'vereda_id' });
 
 /* IngresoFamilia */
 IngresoFamilia.belongsTo(Familia, { foreignKey: 'familia_id' });
@@ -46,6 +55,8 @@ IngresoFamiliaMiembro.hasOne(IngresoMiembroGestante, { foreignKey: 'miembro_ingr
 
 export {
   sequelize,
+  Territorio,
+  Vereda,
   Familia,
   PeriodoAcademico,
   IngresoFamilia,

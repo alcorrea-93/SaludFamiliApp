@@ -35,8 +35,10 @@ export async function getByIngresoId(req, res) {
 export async function list(req, res) {
   try {
     const { ingreso_id } = req.query;
-    const rows = await useCases.list({ ingreso_id });
-    return ok(res, rows);
+    const page = Math.max(parseInt(req.query.page) || 1, 1);
+    const limit = Math.min(Math.max(parseInt(req.query.limit) || 20, 1), 100);
+    const result = await useCases.list({ ingreso_id, page, limit });
+    return ok(res, result);
   } catch (err) {
     return handleError(res, err);
   }

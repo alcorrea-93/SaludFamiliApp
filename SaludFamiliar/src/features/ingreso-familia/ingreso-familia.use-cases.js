@@ -12,6 +12,10 @@ export async function list(filters) {
   return repo.findAll(filters);
 }
 
+export async function getCompleto(id) {
+  return repo.findCompleto(id);
+}
+
 export async function updateIngresoFamilia(id, data) {
   return repo.update(id, data);
 }
