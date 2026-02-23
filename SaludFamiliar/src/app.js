@@ -1,6 +1,19 @@
 import express from 'express';
 import cors from 'cors';
 import { notFoundHandler, globalErrorHandler } from './shared/error-middleware.js';
+import { authMiddleware, requireRole } from './shared/auth.js';
+
+/* --- Auth (público) --- */
+import { authRoutes } from './features/auth/auth.routes.js';
+
+/* --- Admin (protegido ADMIN) --- */
+import { usuarioRoutes } from './features/usuario/usuario.routes.js';
+
+/* --- Reportes (protegido, rol definido en sus rutas) --- */
+import { reportesRoutes } from './features/reportes/reportes.routes.js';
+
+/* --- Rollover (protegido, rol definido en sus rutas) --- */
+import { rolloverRoutes } from './features/rollover/rollover.routes.js';
 
 /* --- Catálogos territoriales --- */
 import { territorioRoutes } from './features/territorio/territorio.routes.js';
@@ -44,7 +57,17 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '2mb' }));
 
+/* === Públicos === */
 app.get('/health', (_, res) => res.json({ ok: true }));
+app.use('/api/auth', authRoutes);
+
+/* === Protegidos (requieren login) === */
+app.use('/api/usuarios', usuarioRoutes);
+app.use('/api/reportes', reportesRoutes);
+app.use('/api/rollover', rolloverRoutes);
+
+/* Todas las rutas de datos requieren autenticación */
+app.use('/api', authMiddleware);
 
 /* --- Catálogos --- */
 app.use('/api/territorios', territorioRoutes);
@@ -68,7 +91,7 @@ app.use('/api/profesores-asignados', profesorAsignadoRoutes);
 app.use('/api/grupo-miembros', grupoMiembroRoutes);
 app.use('/api/asignacion-familia-grupo', asignacionFamiliaGrupoRoutes);
 
-/* --- Ingreso --- */
+/* --- Ingreso (DOCENTE+) --- */
 app.use('/api/ingreso-familia', ingresoFamiliaRoutes);
 app.use('/api/ingreso-vivienda', ingresoViviendaRoutes);
 app.use('/api/ingreso-vivienda-animal', ingresoViviendaAnimalRoutes);
