@@ -5,6 +5,8 @@ export const Familia = sequelize.define('Familia', {
   id: { type: DataTypes.BIGINT, primaryKey: true, autoIncrement: true },
   vereda_id: { type: DataTypes.BIGINT, allowNull: false },
   nombre_familia: { type: DataTypes.TEXT, allowNull: false },
+  codigo_familia: { type: DataTypes.TEXT, unique: true },
+  numero_familia: { type: DataTypes.INTEGER },
   jefe_integrante_id: { type: DataTypes.BIGINT },
   telefono_contacto: { type: DataTypes.TEXT },
   observaciones: { type: DataTypes.TEXT },

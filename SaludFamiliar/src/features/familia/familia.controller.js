@@ -3,10 +3,22 @@ import { created, ok, noContent, notFound, badRequest, handleError } from '../..
 
 export async function create(req, res) {
   try {
-    const { vereda_id, nombre_familia } = req.body;
-    if (!vereda_id || !nombre_familia) return badRequest(res, 'vereda_id y nombre_familia son requeridos');
+    const { vereda_id, nombre_familia, numero_familia } = req.body;
+    if (!vereda_id || !nombre_familia || numero_familia == null) {
+      return badRequest(res, 'vereda_id, nombre_familia y numero_familia son requeridos');
+    }
     const row = await useCases.createFamilia(req.body);
     return created(res, row);
+  } catch (err) {
+    return handleError(res, err);
+  }
+}
+
+export async function getByCodigo(req, res) {
+  try {
+    const row = await useCases.getByCodigo(req.params.codigo);
+    if (!row) return notFound(res, 'Familia no encontrada');
+    return ok(res, row);
   } catch (err) {
     return handleError(res, err);
   }

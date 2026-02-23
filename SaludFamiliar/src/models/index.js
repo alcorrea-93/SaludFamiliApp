@@ -37,6 +37,10 @@ import { Seguimiento } from './Seguimiento.js';
 import { SeguimientoParticipante } from './SeguimientoParticipante.js';
 import { FamiliaPerdidaRegistro } from './FamiliaPerdidaRegistro.js';
 
+/* --- Auth --- */
+import { Rol } from './Rol.js';
+import { Usuario } from './Usuario.js';
+
 /* ========== ASOCIACIONES ========== */
 
 /* Territorio -> Vereda -> Familia */
@@ -136,6 +140,11 @@ Familia.hasMany(FamiliaPerdidaRegistro, { foreignKey: 'familia_id' });
 FamiliaPerdidaRegistro.belongsTo(PeriodoAcademico, { foreignKey: 'periodo_id' });
 FamiliaPerdidaRegistro.belongsTo(GrupoEstudiantil, { foreignKey: 'grupo_estudiantil_id' });
 
+/* Usuario -> Rol, Usuario -> Profesor */
+Usuario.belongsTo(Rol, { foreignKey: 'rol_id' });
+Rol.hasMany(Usuario, { foreignKey: 'rol_id' });
+Usuario.belongsTo(Profesor, { foreignKey: 'profesor_id' });
+
 export {
   sequelize,
   Territorio,
@@ -163,4 +172,6 @@ export {
   Seguimiento,
   SeguimientoParticipante,
   FamiliaPerdidaRegistro,
+  Rol,
+  Usuario,
 };
